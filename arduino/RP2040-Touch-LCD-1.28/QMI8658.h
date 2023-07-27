@@ -480,7 +480,7 @@ extern void QMI8658_read_acc_xyz(float acc_xyz[3]);
 extern void QMI8658_read_gyro_xyz(float gyro_xyz[3]);
 extern void QMI8658_read_xyz(float acc[3], float gyro[3], unsigned int *tim_count);
 extern void QMI8658_read_xyz_raw(short raw_acc_xyz[3], short raw_gyro_xyz[3], unsigned int *tim_count);
-extern void QMI8658_read_ae(float quat[4], float velocity[3]);
+extern void QMI8658_read_ae(float quat[4], float velocity[3], unsigned int *tim_count);
 extern unsigned char QMI8658_readStatus0(void);
 extern unsigned char QMI8658_readStatus1(void);
 extern float QMI8658_readTemp(void);

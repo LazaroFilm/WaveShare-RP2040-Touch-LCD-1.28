@@ -50,7 +50,7 @@ void setup()
 
     Paint_DrawNum(50, 80, 9.87654321, &Font20, 3, WHITE, BLACK);
     Paint_DrawString_EN(50, 100, "ABC", &Font20, 0x000f, 0xfff0);
-    Paint_DrawString_CN(50, 120, "Î¢Ñ©µç×Ó", &Font24CN, WHITE, BLUE);
+    // Paint_DrawString_CN(50, 120, "Î¢Ñ©ï¿½ï¿½ï¿½ï¿½", &Font24CN, WHITE, BLUE);
     Paint_DrawString_EN(50, 161, "WaveShare", &Font16, RED, WHITE);
 
     // /*3.Refresh the picture in RAM to LCD*/
@@ -60,7 +60,7 @@ void setup()
 #endif
 
 #if 1
-    float acc[3], gyro[3];
+    float acc[3], gyro[3], quat[4], velocity[3];
     unsigned int tim_count = 0;
     uint16_t result;
 
@@ -78,28 +78,37 @@ void setup()
     Paint_DrawRectangle(0, 195, 240, 240, 0X2595, DOT_PIXEL_2X2, DRAW_FILL_FULL);
 
     Paint_DrawString_EN(45, 30, "LongPress Quit", &Font16, WHITE, BLACK);
-    Paint_DrawString_EN(45, 50, "ACC_X = ", &Font16, WHITE, BLACK);
-    Paint_DrawString_EN(45, 75, "ACC_Y = ", &Font16, WHITE, BLACK);
-    Paint_DrawString_EN(45, 100, "ACC_Z = ", &Font16, WHITE, BLACK);
-    Paint_DrawString_EN(45, 125, "GYR_X = ", &Font16, WHITE, BLACK);
-    Paint_DrawString_EN(45, 150, "GYR_Y = ", &Font16, WHITE, BLACK);
-    Paint_DrawString_EN(45, 175, "GYR_Z = ", &Font16, WHITE, BLACK);
+    Paint_DrawString_EN(45, 50, "ACC_X= ", &Font16, WHITE, BLACK);
+    Paint_DrawString_EN(45, 75, "ACC_Y= ", &Font16, WHITE, BLACK);
+    Paint_DrawString_EN(45, 100, "ACC_Z= ", &Font16, WHITE, BLACK);
+    Paint_DrawString_EN(45, 125, "GYR_X= ", &Font16, WHITE, BLACK);
+    Paint_DrawString_EN(45, 150, "GYR_Y= ", &Font16, WHITE, BLACK);
+    Paint_DrawString_EN(45, 175, "GYR_Z= ", &Font16, WHITE, BLACK);
     Paint_DrawString_EN(45, 200, "BAT(V)=", &Font16, WHITE, BLACK);
     LCD_1IN28_Display(BlackImage);
     while (true)
     {
         result = DEC_ADC_Read();
-        QMI8658_read_xyz(acc, gyro, &tim_count);
+        // QMI8658_read_xyz(acc, gyro, &tim_count);
+        int status[1];
+        status[0] = QMI8658_readStatus0();
+        Serial.print("Time = ");
+        Serial.print(tim_count);
+        Serial.print(" | QMI8658Register_Status0 = ");
+        Serial.print(status[0]);
+        QMI8658_read_ae(quat, velocity, &tim_count);
+        // Serial.print(" | MQI8658Register_Quaternion = ");
+        // Serial.print(quat[0]);
         // Paint_Clear(WHITE);
         Paint_DrawRectangle(120, 47,  220, 120, 0X4F30, DOT_PIXEL_2X2, DRAW_FILL_FULL);
         Paint_DrawRectangle(120, 120, 220, 195, 0XAD55, DOT_PIXEL_2X2, DRAW_FILL_FULL);
         Paint_DrawRectangle(120, 195, 220, 240, 0X2595, DOT_PIXEL_2X2, DRAW_FILL_FULL);
-        Paint_DrawNum(120, 50, acc[0], &Font16, 2, BLACK, WHITE);
-        Paint_DrawNum(120, 75, acc[1], &Font16, 2, BLACK, WHITE);
-        Paint_DrawNum(120, 100, acc[2], &Font16, 2, BLACK, WHITE);
-        Paint_DrawNum(120, 125, gyro[0], &Font16, 2, BLACK, WHITE);
-        Paint_DrawNum(120, 150, gyro[1], &Font16, 2, BLACK, WHITE);
-        Paint_DrawNum(120, 175, gyro[2], &Font16, 2, BLACK, WHITE);
+        Paint_DrawNum(120, 50, quat[0], &Font16, 2, BLACK, WHITE);
+        Paint_DrawNum(120, 75, quat[1], &Font16, 2, BLACK, WHITE);
+        Paint_DrawNum(120, 100, quat[2], &Font16, 2, BLACK, WHITE);
+        Paint_DrawNum(120, 125, quat[3], &Font16, 2, BLACK, WHITE);
+        Paint_DrawNum(120, 150, velocity[1], &Font16, 2, BLACK, WHITE);
+        Paint_DrawNum(120, 175, velocity[2], &Font16, 2, BLACK, WHITE);
 
         Paint_DrawNum(130, 200, result * conversion_factor, &Font16, 2, BLACK, WHITE);
         LCD_1IN28_DisplayWindows(120, 50, 210, 200, BlackImage);
